@@ -1,9 +1,9 @@
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import MaxValueValidator, MinValueValidator
+#from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from foodgram.settings import SLICE_OF_TEXT
-from validators import validate_username, validate_year
+from validators import validate_username #, validate_year
 
 # user взял из api_yamdb
 ROLE_CHOICES = (
@@ -66,8 +66,9 @@ class User(AbstractUser):
         verbose_name_plural = 'Пользователи'
         constraints = [
             models.UniqueConstraint(
-                fields=['email', 'username'], name='unique_user'
-            )
+                fields=['email', 'username'],
+                name='unique_user'
+            ),
         ]
 
     def __str__(self):
