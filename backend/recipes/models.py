@@ -54,7 +54,7 @@ class Recipe(models.Model):
         help_text='Информация о тегах',
     )
     image = models.ImageField(
-        upload_to='recipes/',
+        upload_to='recipes/images/',
         verbose_name='Картинка, закодированная в Base64',
         help_text='Картинка рецепта',
     )
