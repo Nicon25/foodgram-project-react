@@ -66,12 +66,44 @@ class User(AbstractUser):
         verbose_name_plural = 'Пользователи'
         constraints = [
             models.UniqueConstraint(
-                fields=['email'], name='unique_email'
-            ),
-            models.UniqueConstraint(
-                fields=['username'], name='unique_username'
+                fields=['email', 'username'], name='unique_user'
             )
         ]
 
     def __str__(self):
         return self.username[:SLICE_OF_TEXT]
+
+
+# follow взял из hw5_final
+class Follow(models.Model):
+    user = models.ForeignKey(
+        User,
+        related_name='follower',
+        on_delete=models.CASCADE,
+        verbose_name='Подписчик',
+        help_text='Информация о подписчике',
+    )
+    author = models.ForeignKey(
+        User,
+        related_name='following',
+        on_delete=models.CASCADE,
+        verbose_name='Автор',
+        help_text='Информация о авторе',
+    )
+
+    class Meta:
+        verbose_name = 'Подписки'
+        verbose_name_plural = 'Подписки'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'author'],
+                name='unique_follow',
+            ),
+            models.CheckConstraint(
+                name='check_self_follow',
+                check=~models.Q(user=models.F('author')),
+            ),
+        ]
+
+    def __str__(self):
+        return f'{self.user} follows {self.author}'
