@@ -9,20 +9,23 @@ from validators import validate_slug
 
 class Tag(models.Model):
     name = models.CharField(
-        verbose_name='Название',
         max_length=200,
-        unique=True
+        unique=True,
+        verbose_name='Название',
+        help_text='Информация о теге',
     )
     color = models.CharField(
         max_length=7,
+        null = True,
         verbose_name='Цвет в HEX',
-        null = True
+        help_text='Информация о цвете тега',
     )
     slug = models.SlugField(
         validators=(validate_slug,),
         max_length=200,
+        unique=True,
         verbose_name='Уникальный слаг',
-        unique=True
+        help_text='Информация о слаге тега',
     )
 
     class Meta:
@@ -68,7 +71,7 @@ class Recipe(models.Model):
         help_text='Описание рецепта',
     )
     cooking_time = models.IntegerField(
-        validators=[MinValueValidator(1)],
+        validators=(MinValueValidator(1),),
         verbose_name='Время приготовления в минутах',
         help_text='Информация о времени приготовления рецепта',
     )
@@ -86,3 +89,23 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.name[:SLICE_OF_TEXT]
+
+
+class Ingredient(models.Model):
+    name = models.CharField(
+        max_length=200,
+        verbose_name='Название ингредиента',
+        help_text='Информация о ингредиенте',
+    )
+    measurement_unit = models.CharField(
+        max_length=200,
+        verbose_name='Единицы измерения',
+        help_text='Информация о единицах измерения ингредиента',
+    )
+
+    class Meta:
+        verbose_name = 'Ингредиент'
+        verbose_name_plural = 'Ингредиенты'
+
+    def __str__(self):
+        return f'{self.name}, {self.measurement_unit}'[:SLICE_OF_TEXT]

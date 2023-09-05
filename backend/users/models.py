@@ -110,4 +110,4 @@ class Follow(models.Model):
         ]
 
     def __str__(self):
-        return f'{self.user} follows {self.author}'
+        return f'{self.user} follows {self.author}'[:SLICE_OF_TEXT]
