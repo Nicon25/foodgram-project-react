@@ -14,39 +14,42 @@ ROLE_CHOICES = (
 
 class User(AbstractUser):
     email = models.EmailField(
-        'Адрес электронной почты',
         max_length=254,
         unique=True,
         blank=False,
-        null=False
+        null=False,
+        verbose_name='Адрес электронной почты',
+        help_text='Информация о адресе электронной почты',
     )
-    
     username = models.CharField(
-        'Уникальный юзернейм',
         validators=(validate_username,),
         max_length=150,
         unique=True,
         blank=False,
-        null=False
+        null=False,
+        verbose_name='Уникальный юзернейм',
+        help_text='Информация о юзернейме',
     )
-    
     first_name = models.CharField(
-        'Имя',
         max_length=150,
         blank=False,
-        null=False
+        null=False,
+        verbose_name='Имя',
+        help_text='Информация о имени пользователя',
     )
     last_name = models.CharField(
-        'Фамилия',
         max_length=150,
         blank=False,
-        null=False
+        null=False,
+        verbose_name='Фамилия',
+        help_text='Информация о фамилии пользователя',
     )
     password = models.CharField(
-        'Пароль',
         max_length=150,
         blank=False,
-        null=False
+        null=False,
+        verbose_name='Пароль',
+        help_text='Информация о пароле',
     )
 
     @property
