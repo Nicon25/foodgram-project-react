@@ -132,3 +132,5 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 6,
 
 }
+
+SLICE_OF_TEXT = 15
