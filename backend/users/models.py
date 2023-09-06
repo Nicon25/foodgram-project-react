@@ -1,9 +1,8 @@
 from django.contrib.auth.models import AbstractUser
-#from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-from foodgram.settings import SLICE_OF_TEXT
-from validators import validate_username #, validate_year
+from foodgram.settings import SLICE_OF_TEXT, SLICE_OF_TEXT_LONG
+from validators import validate_username
 
 # user взял из api_yamdb
 ROLE_CHOICES = (
@@ -92,7 +91,7 @@ class Follow(models.Model):
         related_name='following',
         on_delete=models.CASCADE,
         verbose_name='Автор',
-        help_text='Информация о авторе',
+        help_text='Информация об авторе',
     )
 
     class Meta:
@@ -110,4 +109,4 @@ class Follow(models.Model):
         ]
 
     def __str__(self):
-        return f'{self.user} follows {self.author}'[:SLICE_OF_TEXT]
+        return f'{self.user} follows {self.author}'[:SLICE_OF_TEXT_LONG]

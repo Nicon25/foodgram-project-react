@@ -2,8 +2,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from users.models import User
 
-
-from foodgram.settings import SLICE_OF_TEXT
+from foodgram.settings import SLICE_OF_TEXT, SLICE_OF_TEXT_LONG
 from validators import validate_slug
 
 
@@ -143,4 +142,56 @@ class IngredientInRecipe(models.Model):
         ]
 
     def __str__(self):
-        return f'{self.ingredient} in {self.recipe}'[:SLICE_OF_TEXT]
+        return f'{self.ingredient} in {self.recipe}'[:SLICE_OF_TEXT_LONG]
+
+
+class ShoppingCart(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь',
+        help_text='Информация о пользователе', 
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='is_in_shopping_cart',
+        verbose_name='Название рецепта',
+        help_text='Информация о названии рецепта',
+    )
+
+    class Meta:
+        verbose_name = 'Рецепт добавлен в список покупок'
+        verbose_name_plural = 'Рецепты добавлены в список покупок'
+
+    def __str__(self):
+        return f'{self.recipe} added to {self.user}\'s shopping list.'[:SLICE_OF_TEXT_LONG]
+
+
+class Favorites(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь',
+        help_text='Информация о пользователе', 
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='is_favorited',
+        verbose_name='Название рецепта',
+        help_text='Информация о названии рецепта',
+    )
+
+    class Meta:
+        verbose_name = 'Любимый рецепт'
+        verbose_name_plural = 'Любимые рецепты'
+        constraints = (
+            models.UniqueConstraint(
+                fields=('user', 'recipe'),
+                name='unique_recipe_in_favorites'
+            ),
+        )
+
+    def __str__(self):
+        return f'{self.user} loves {self.recipe}'[:SLICE_OF_TEXT_LONG]
