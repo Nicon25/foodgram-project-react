@@ -45,14 +45,14 @@ class Tag(models.Model):
 class Recipe(models.Model):
     ingredients = models.ManyToManyField(
         'Ingredient',
-        through='RecipeIngredient',
+        through='IngredientInRecipe',
         related_name='recipe',
         verbose_name='Список ингредиентов',
         help_text='Информация о ингредиентах',
     )
     tags = models.ManyToManyField(
         Tag,
-        related_name='recipes',
+        related_name='recipe',
         verbose_name='Список id тегов',
         help_text='Информация о тегах',
     )
@@ -77,7 +77,7 @@ class Recipe(models.Model):
     )
     author = models.ForeignKey(
         User,
-        related_name='recipes',
+        related_name='recipe',
         verbose_name='Автор рецепта',
         help_text='Информация об авторе рецепта',
          #on_delete=models.CASCADE,   #не уверен что нужно удалять - подумать можно ли оставить рецепты как ноунейм при удалении юзера
@@ -108,4 +108,39 @@ class Ingredient(models.Model):
         verbose_name_plural = 'Ингредиенты'
 
     def __str__(self):
-        return f'{self.name}, {self.measurement_unit}'[:SLICE_OF_TEXT]
+        return f'{self.name} ({self.measurement_unit})'[:SLICE_OF_TEXT]
+
+
+class IngredientInRecipe(models.Model):
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='recipe_used',
+        verbose_name='Название рецепта',
+        help_text='Информация о названии рецепта',
+    )
+    ingredient = models.ForeignKey(
+        Ingredient,
+        on_delete=models.CASCADE,
+        related_name='ingredient_used',
+        verbose_name='Название ингредиента',
+        help_text='Информация о названии ингредиента',
+    )
+    amount = models.IntegerField(
+        validators=(MinValueValidator(1),),
+        verbose_name='Количество ингредиента',
+        help_text='Информация о необходимом количестве ингредиента',
+    )
+
+    class Meta:
+        verbose_name = 'Ингредиент, используемый в рецепте'
+        verbose_name_plural = 'Ингредиенты, используемые в рецепте'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['recipe', 'ingredient'],
+                name='unique_ingredient_in_recipe'
+            )
+        ]
+
+    def __str__(self):
+        return f'{self.ingredient} in {self.recipe}'[:SLICE_OF_TEXT]
