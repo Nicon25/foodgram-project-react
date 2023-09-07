@@ -51,9 +51,6 @@ class User(AbstractUser):
         help_text='Информация о пароле',
     )
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
-
     @property
     def is_user(self):
         return self.role == 'user'
