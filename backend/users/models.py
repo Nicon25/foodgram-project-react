@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 from foodgram.settings import SLICE_OF_TEXT, SLICE_OF_TEXT_LONG
-from validators import validate_username
+from .validators import validate_username
 
 # user взял из api_yamdb
 ROLE_CHOICES = (
@@ -50,6 +50,9 @@ class User(AbstractUser):
         verbose_name='Пароль',
         help_text='Информация о пароле',
     )
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
     @property
     def is_user(self):

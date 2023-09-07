@@ -1,10 +1,12 @@
+from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
-from users.models import User
+#from users.models import User
 
 from foodgram.settings import SLICE_OF_TEXT, SLICE_OF_TEXT_LONG
-from validators import validate_slug
+from .validators import validate_slug
 
+User = get_user_model()
 
 class Tag(models.Model):
     name = models.CharField(
@@ -77,9 +79,9 @@ class Recipe(models.Model):
     author = models.ForeignKey(
         User,
         related_name='recipe',
+        on_delete=models.CASCADE,
         verbose_name='Автор рецепта',
         help_text='Информация об авторе рецепта',
-         #on_delete=models.CASCADE,   #не уверен что нужно удалять - подумать можно ли оставить рецепты как ноунейм при удалении юзера
     )
 
     class Meta:
@@ -149,6 +151,7 @@ class ShoppingCart(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
+        related_name='is_in_shopping_cart',
         verbose_name='Пользователь',
         help_text='Информация о пользователе', 
     )
@@ -172,6 +175,7 @@ class Favorites(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
+        related_name='is_favorited',
         verbose_name='Пользователь',
         help_text='Информация о пользователе', 
     )

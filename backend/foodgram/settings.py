@@ -15,16 +15,18 @@ DEBUG = True
 ALLOWED_HOSTS = env.list('ALLOWED_HOST', default = ['127.0.0.1', 'localhost'])
 
 INSTALLED_APPS = [
+    'api.apps.ApiConfig',
+    'recipes.apps.RecipesConfig',
+    'users.apps.UsersConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'api',
-    'recipes',
-    'users',
-    'djoser'
+    'rest_framework.authtoken',
+    'rest_framework',
+    'djoser',
 ]
 
 MIDDLEWARE = [
@@ -62,7 +64,7 @@ if DEBUG:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
     }
 else:
@@ -135,3 +137,5 @@ REST_FRAMEWORK = {
 
 SLICE_OF_TEXT = 15
 SLICE_OF_TEXT_LONG = 25
+
+AUTH_USER_MODEL = 'users.User'
