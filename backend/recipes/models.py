@@ -89,7 +89,7 @@ class Recipe(models.Model):
         verbose_name_plural = 'Рецепты'
 
     def __str__(self):
-        return self.name[:SLICE_OF_TEXT]
+        return self.name[:SLICE_OF_TEXT_LONG]
 
 
 class Ingredient(models.Model):
@@ -109,7 +109,7 @@ class Ingredient(models.Model):
         verbose_name_plural = 'Ингредиенты'
 
     def __str__(self):
-        return f'{self.name} ({self.measurement_unit})'[:SLICE_OF_TEXT]
+        return f'{self.name} ({self.measurement_unit})'[:SLICE_OF_TEXT_LONG]
 
 
 class IngredientInRecipe(models.Model):
@@ -164,11 +164,11 @@ class ShoppingCart(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Рецепт добавлен в список покупок'
-        verbose_name_plural = 'Рецепты добавлены в список покупок'
+        verbose_name = 'Рецепт, добавленный в список покупок'
+        verbose_name_plural = 'Рецепты, добавленые в список покупок'
 
     def __str__(self):
-        return f'{self.recipe} added to {self.user}\'s shopping list.'[:SLICE_OF_TEXT_LONG]
+        return f'\'{self.recipe}\' в списке покупок у \'{self.user}\''[:SLICE_OF_TEXT_LONG]
 
 
 class Favorites(models.Model):
@@ -198,4 +198,4 @@ class Favorites(models.Model):
         )
 
     def __str__(self):
-        return f'{self.user} loves {self.recipe}'[:SLICE_OF_TEXT_LONG]
+        return f'Пользователь \'{self.user}\' любит {self.recipe}'[:SLICE_OF_TEXT_LONG]
