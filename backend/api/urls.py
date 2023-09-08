@@ -26,6 +26,6 @@ v1_router.register(r'users', UserViewSet, basename='users')
 # ]
 
 urlpatterns = [
-    path('v1/', include(v1_router.urls)),
+    path('', include(v1_router.urls)),
     # path('v1/auth/', include(v1_auth_path))
 ]
