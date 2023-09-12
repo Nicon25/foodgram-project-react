@@ -1,10 +1,20 @@
 from rest_framework import permissions
 
-# Проверяем, является ли пользователь владельцем аккаунта.
-class IsOwner(permissions.BasePermission):
+class IsAuthorOrReadOnly(permissions.BasePermission):
+    '''
+    Дает доступ автору
+    Для остальных только GET
+    '''
+
     def has_permission(self, request, view):
-        return request.user.is_authenticated and view.kwargs.get('pk') == str(request.user.pk)
+        user = request.user
+        return (
+            user.is_authenticated
+            or request.method in permissions.SAFE_METHODS
+        )
 
     def has_object_permission(self, request, view, obj):
-        return request.user.is_authenticated and obj.user == request.user
-
+        return (
+            obj.author == request.user
+            or request.method in permissions.SAFE_METHODS
+        )

@@ -7,44 +7,6 @@ from users.models import User, Follow
 from recipes.models import Tag, Recipe, Ingredient, IngredientInRecipe, ShoppingCart, Favorites
 
 # взял из api_yambd
-# class ObtainTokenSerializer(serializers.ModelSerializer):
-#     username = serializers.CharField(max_length=50)
-#     confirmation_code = serializers.CharField(max_length=15)
-
-#     class Meta:
-#         model = User
-#         fields = ('username', 'confirmation_code')
-
-
-# class RegistrationSerializer(serializers.ModelSerializer):
-
-#     class Meta:
-#         model = User
-#         fields = ('email', 'username')
-
-#     def validate(self, data):
-#         # Проверяем, есть ли уже пользователь с таким именем
-#         username = data.get('username')
-#         if User.objects.filter(username=username).exists():
-#             raise serializers.ValidationError(
-#                 'Пользователь с таким именем уже зарегистрирован'
-#             )
-
-#         # Проверяем, есть ли уже пользователь с таким email
-#         email = data.get('email')
-#         if User.objects.filter(email=email).exists():
-#             raise serializers.ValidationError(
-#                 'Пользователь с таким email уже зарегистрирован'
-#             )
-
-#         # Валидируем, что пользователь не будет использовать никнейм,
-#         # конфликтующий с эндпоинтом
-#         if username != 'me':
-#             return data
-
-#         raise serializers.ValidationError('Невозможное имя пользователя')
-
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('email', 'username', 'first_name', 'last_name', 'password')
@@ -66,8 +28,15 @@ class CustomUserCreateSerializer(UserCreateSerializer):
 
 
 class ChangePasswordSerializer(serializers.Serializer):
-    old_password = serializers.CharField(required=True)
+    class Meta:
+        fields = ('current_password', 'new_password')
+    current_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
+
+    def validate(self, data):
+        if data['current_password'] == data['new_password']:
+            raise serializers.ValidationError('Новый пароль должен отличаться от старого.')
+        return data
 
 
 class FollowSerializer(serializers.ModelSerializer):
