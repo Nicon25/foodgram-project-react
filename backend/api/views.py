@@ -67,7 +67,17 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response(status=204)
         else:
             return Response({'error': 'Доступ запрещен.'}, status=401)
-        
+
+    # Возвращает текущего пользователя   
+    @action(detail=False, methods=['get'])
+    def me(self, request):
+        # Получаем текущего залогиненного пользователя
+        user = request.user
+        if not user.is_authenticated:
+            return Response({'detail': 'Пользователь не авторизован.'}, status=status.HTTP_401_UNAUTHORIZED)
+        # Сериализуем профиль пользователя и возвращаем его
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
 
 class FollowViewSet(viewsets.ModelViewSet):
     queryset = Follow.objects.all()
