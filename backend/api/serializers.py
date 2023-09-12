@@ -1,6 +1,7 @@
 from django.forms import ValidationError
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
+from djoser.serializers import UserCreateSerializer
 
 from users.models import User, Follow
 from recipes.models import Tag, Recipe, Ingredient, IngredientInRecipe, ShoppingCart, Favorites
@@ -46,18 +47,28 @@ from recipes.models import Tag, Recipe, Ingredient, IngredientInRecipe, Shopping
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ('__all__')
+        fields = ('email', 'username', 'first_name', 'last_name', 'password')
         model = User
-    #     extra_kwargs = {'email': {'required': True},
-    #                     'role': {'read_only': True},
-    #                     'username': {'required': True}}
 
-    # def validate(self, data):
-    #     if data.get('username') != 'me':
-    #         return data
-    #     raise serializers.ValidationError(
-    #         'Вы не можете дать такое имя'
-    #     )
+    def create(self, validated_data):
+        user = User(
+            email=validated_data['email'],
+            username=validated_data['username']
+        )
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
+    
+
+class CustomUserCreateSerializer(UserCreateSerializer):
+    class Meta(UserCreateSerializer.Meta):
+        fields = ('email', 'username', 'first_name', 'last_name', 'password')
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
 
 class FollowSerializer(serializers.ModelSerializer):
     class Meta:
@@ -99,7 +110,6 @@ class FavoritesSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('__all__')
         model = Favorites
-
 
 # class AdminUserSerializer(serializers.ModelSerializer):
 

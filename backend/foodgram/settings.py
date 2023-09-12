@@ -15,17 +15,17 @@ DEBUG = True
 ALLOWED_HOSTS = env.list('ALLOWED_HOST', default = ['127.0.0.1', 'localhost'])
 
 INSTALLED_APPS = [
-    'api.apps.ApiConfig',
-    'recipes.apps.RecipesConfig',
-    'users.apps.UsersConfig',
+    'api',
+    'recipes',
+    'users',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework.authtoken',
     'rest_framework',
+    'rest_framework.authtoken',
     'djoser',
 ]
 
@@ -135,7 +135,27 @@ REST_FRAMEWORK = {
 
 }
 
+DJOSER = {
+    'USER_CREATE_PASSWORD_RETYPE': True,
+    'SERIALIZERS': {
+        'user_create': 'api.serializers.CustomUserCreateSerializer',
+        'user': 'api.serializers.UserSerializer',
+        'current_user': 'api.serializers.UserSerializer',
+    },
+    'PERMISSIONS': {
+        'user_create': ['rest_framework.permissions.AllowAny'],
+        'user': ['rest_framework.permissions.AllowAny'],
+        'user_list': ['rest_framework.permissions.AllowAny'],
+    },
+    'LOGIN_FIELD': 'email',
+    'HIDE_USERS': False,
+}
+ 
 SLICE_OF_TEXT = 15
 SLICE_OF_TEXT_LONG = 75
 
 AUTH_USER_MODEL = 'users.User'
+
+ADMIN_EMAIL = 'potapov.nikolai.v@gmail.com'
+
+LOGIN_URL = '/api/auth/token/login/'

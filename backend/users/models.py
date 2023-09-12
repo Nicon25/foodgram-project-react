@@ -5,11 +5,10 @@ from foodgram.settings import SLICE_OF_TEXT, SLICE_OF_TEXT_LONG
 from .validators import validate_username
 
 # user взял из api_yamdb
-ROLE_CHOICES = (
-    ('user', 'Пользователь'),
-    ('moderator', 'Модератор'),
-    ('admin', 'Администратор'),
-)
+# ROLE_CHOICES = (
+#     ('user', 'Пользователь'),
+#     ('admin', 'Администратор'),
+# )
 
 class User(AbstractUser):
     email = models.EmailField(
@@ -51,17 +50,20 @@ class User(AbstractUser):
         help_text='Информация о пароле',
     )
 
-    @property
-    def is_user(self):
-        return self.role == 'user'
+    is_subscribed = models.BooleanField(
+        default=False,
+        verbose_name="Подписка на автора",
+        help_text='Информация подписан ли пользователь на автора',
+    )
 
-    @property
-    def is_admin(self):
-        return self.role == 'admin'
 
-    @property
-    def is_moderator(self):
-        return self.role == 'moderator'
+    # @property
+    # def is_user(self):
+    #     return self.role == 'user'
+
+    # @property
+    # def is_admin(self):
+    #     return self.role == 'admin'
 
     class Meta:
         verbose_name = 'Пользователь'
