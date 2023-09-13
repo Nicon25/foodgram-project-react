@@ -47,7 +47,7 @@ class FollowSerializer(serializers.ModelSerializer):
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ('__all__')
+        fields = ('id', 'name', 'color', 'slug')
         model = Tag
 
 
