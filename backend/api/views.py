@@ -93,6 +93,8 @@ class TagViewSet(viewsets.ModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('author', 'tags') # добавить по избранному, списку покупок
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
@@ -111,6 +113,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
 class IngredientViewSet(viewsets.ModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
+    permission_classes = [permissions.AllowAny,]
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
 
 
 class IngredientInRecipeViewSet(viewsets.ModelViewSet):
