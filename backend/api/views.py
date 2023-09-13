@@ -28,7 +28,7 @@ class UserViewSet(viewsets.ModelViewSet):
         if self.action in ['list', 'create']:
             return [permissions.AllowAny()]  # Доступ для всех на просмотр юзеров и регистрации
         elif self.action == 'retrieve':
-            return [permissions.IsAuthenticated()]  # Только авторизованные могут просматривать профили пользователей.
+            return [permissions.IsAuthenticated()]  # Только авторизованные могут просматривать профили пользователей
         elif self.action in ['set_password', 'me']:
             return [IsAuthorOrReadOnly()]  # Только владелец аккаунта может смены пароли и просматривать свой профиль
         else:
@@ -94,6 +94,19 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
 
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            return [permissions.AllowAny()]  # Доступ для всех на просмотр списка рецептов
+        elif self.action == 'create':
+            return [permissions.IsAuthenticated()]  # Только авторизованные могут создавать рецепты
+        elif self.action in ['partial_update', 'destroy']:
+            return [IsAuthorOrReadOnly()]  # Только автор может изменять и удалять рецепт
+        else:
+            return [permissions.IsAuthenticated()]  # По умолчанию, требуется авторизация
+
+    def perform_create(self, serializer):
+        # Текущий юзер будет автоматически назначен автором при создании рецепта
+        serializer.save(author=self.request.user)
 
 class IngredientViewSet(viewsets.ModelViewSet):
     queryset = Ingredient.objects.all()
