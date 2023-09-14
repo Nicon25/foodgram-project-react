@@ -114,6 +114,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
 
+    # Добавляем, удаляем рецепты в список покупок
     @action(detail=True, methods=['post', 'delete'], url_path='shopping_cart', permission_classes=[permissions.IsAuthenticated])
     def shopping_cart(self, request, pk=None):
         recipe = self.get_object()
@@ -186,6 +187,38 @@ class RecipeViewSet(viewsets.ModelViewSet):
         response['Content-Disposition'] = 'attachment; filename="shopping_cart.csv"'
 
         return response
+
+    # Добавляем, удаляем рецепты в избранное
+    @action(detail=True, methods=['post', 'delete'], url_path='favorite', permission_classes=[permissions.IsAuthenticated])
+    def favorite(self, request, pk=None):
+        recipe = self.get_object()
+        user = request.user
+
+        # Добавляем рецепт в избранное
+        if request.method == 'POST':
+            
+            # Проверяем, что рецепт еще не добавлен в избранное текущего пользователя
+            if Favorites.objects.filter(user=user, recipe=recipe).exists():
+                return Response({'detail': 'Рецепт уже добавлен в избранное.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Добавляем рецепт в избранное
+            Favorites.objects.create(user=user, recipe=recipe)
+
+            return Response({'detail': 'Рецепт добавлен в избранное.'}, status=status.HTTP_201_CREATED)
+
+        # Удаляем рецепт из избранного
+        elif request.method == 'DELETE':
+
+            # Проверяем, что рецепт добавлен в избранное текущего пользователя
+            try:
+                favorites_item = Favorites.objects.get(user=user, recipe=recipe)
+            except Favorites.DoesNotExist:
+                return Response({'detail': 'Рецепт не найден в избранном.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Удаляем рецепт из избранного
+            favorites_item.delete()
+
+            return Response({'detail': 'Рецепт удален из избранного.'}, status=status.HTTP_204_NO_CONTENT)
 
 
 class IngredientViewSet(viewsets.ModelViewSet):
