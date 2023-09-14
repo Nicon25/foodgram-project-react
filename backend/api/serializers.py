@@ -4,7 +4,7 @@ from rest_framework import serializers
 from djoser.serializers import UserCreateSerializer
 
 from users.models import User, Follow
-from recipes.models import Tag, Recipe, Ingredient, IngredientInRecipe, ShoppingCart, Favorites
+from recipes.models import Tag, Recipe, Ingredient, IngredientInRecipe, Favorites
 import base64
 
 from django.core.files.base import ContentFile
@@ -88,12 +88,6 @@ class IngredientInRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('__all__')
         model = IngredientInRecipe
-
-
-class ShoppingCartSerializer(serializers.ModelSerializer):
-    class Meta:
-        fields = ('__all__')
-        model = ShoppingCart
 
 
 class FavoritesSerializer(serializers.ModelSerializer):

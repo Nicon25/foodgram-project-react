@@ -3,6 +3,9 @@ from django.core.mail import send_mail
 from django.db.models import Avg, Q
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+import csv
+from django.http import HttpResponse
+from io import StringIO
 from rest_framework import filters, mixins, status, viewsets, permissions
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.filters import SearchFilter
@@ -16,7 +19,7 @@ from users.models import User, Follow
 from recipes.models import Tag, Recipe, Ingredient, IngredientInRecipe, ShoppingCart, Favorites
 #from .filters import TitleFilter
 from .permissions import (IsAuthorOrReadOnly)
-from .serializers import (ChangePasswordSerializer, CustomUserCreateSerializer, UserSerializer, FollowSerializer, TagSerializer, RecipeSerializer, IngredientSerializer, IngredientInRecipeSerializer, ShoppingCartSerializer, FavoritesSerializer)
+from .serializers import (ChangePasswordSerializer, CustomUserCreateSerializer, UserSerializer, FollowSerializer, TagSerializer, RecipeSerializer, IngredientSerializer, IngredientInRecipeSerializer, FavoritesSerializer)
 
 
 # взял из api_yambd
@@ -110,6 +113,81 @@ class RecipeViewSet(viewsets.ModelViewSet):
         # Текущий юзер будет автоматически назначен автором при создании рецепта
         serializer.save(author=self.request.user)
 
+
+    @action(detail=True, methods=['post', 'delete'], url_path='shopping_cart', permission_classes=[permissions.IsAuthenticated])
+    def shopping_cart(self, request, pk=None):
+        recipe = self.get_object()
+        user = request.user
+
+        # Добавляем рецепт в список покупок
+        if request.method == 'POST':
+            
+            # Проверяем, что рецепт еще не добавлен в список текущего пользователя
+            if ShoppingCart.objects.filter(user=user, recipe=recipe).exists():
+                return Response({'detail': 'Рецепт уже добавлен в список покупок.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Добавляем рецепт в список покупок
+            ShoppingCart.objects.create(user=user, recipe=recipe)
+
+            return Response({'detail': 'Рецепт добавлен в список покупок.'}, status=status.HTTP_201_CREATED)
+
+        # Удаляем рецепт из списка покупок
+        elif request.method == 'DELETE':
+
+            # Проверяем, что рецепт добавлен в список покупок текущего пользователя
+            try:
+                shopping_cart_item = ShoppingCart.objects.get(user=user, recipe=recipe)
+            except ShoppingCart.DoesNotExist:
+                return Response({'detail': 'Рецепт не найден в списке покупок.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Удаляем рецепт из списка покупок
+            shopping_cart_item.delete()
+
+            return Response({'detail': 'Рецепт удален из списка покупок.'}, status=status.HTTP_204_NO_CONTENT)
+
+    # Скачиваем список покупок
+    @action(detail=False, methods=['get'], url_path='download_shopping_cart', permission_classes=[permissions.IsAuthenticated])
+    def download_shopping_cart(self, request):
+        user = request.user
+
+        # Получаем список покупок текущего пользователя
+        shopping_cart_items = ShoppingCart.objects.filter(user=user)
+
+        # Создаем структуру данных для хранения информации об ингредиентах и их суммарном количестве
+        ingredient_counts = {}
+
+        # Проходим по всем элементам списка покупок и обновляем информацию в ingredient_counts
+        for item in shopping_cart_items:
+            recipe = item.recipe
+            ingredients_in_recipe = IngredientInRecipe.objects.filter(recipe=recipe)
+
+            for ingredient_in_recipe in ingredients_in_recipe:
+                ingredient = ingredient_in_recipe.ingredient
+                amount = ingredient_in_recipe.amount
+
+                if ingredient in ingredient_counts:
+                    ingredient_counts[ingredient] += amount
+                else:
+                    ingredient_counts[ingredient] = amount
+
+        # Создаем объект CSV и записываем данные в него
+        output = StringIO()
+        writer = csv.writer(output)
+
+        # Заголовок CSV файла
+        writer.writerow(['Название ингредиента', 'Количество', 'Единицы измерения'])
+
+        # Записываем данные ингредиентов в CSV
+        for ingredient, amount in ingredient_counts.items():
+            writer.writerow([ingredient.name, amount, ingredient.measurement_unit])
+
+        # Создаем HTTPResponse с данными CSV и возвращаем его
+        response = HttpResponse(output.getvalue(), content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="shopping_cart.csv"'
+
+        return response
+
+
 class IngredientViewSet(viewsets.ModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
@@ -121,11 +199,6 @@ class IngredientViewSet(viewsets.ModelViewSet):
 class IngredientInRecipeViewSet(viewsets.ModelViewSet):
     queryset = IngredientInRecipe.objects.all()
     serializer_class = IngredientInRecipeSerializer
-
-
-class ShoppingCartViewSet(viewsets.ModelViewSet):
-    queryset = ShoppingCart.objects.all()
-    serializer_class = ShoppingCartSerializer
 
 
 class FavoritesViewSet(viewsets.ModelViewSet):

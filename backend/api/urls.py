@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework import routers
 
-from .views import (UserViewSet, FollowViewSet, TagViewSet, RecipeViewSet, IngredientViewSet, IngredientInRecipeViewSet, ShoppingCartViewSet, FavoritesViewSet) #, signup, Token)
+from .views import (UserViewSet, FollowViewSet, TagViewSet, RecipeViewSet, IngredientViewSet, IngredientInRecipeViewSet, FavoritesViewSet) #, signup, Token)
 
 # взял из api_yambd
 
@@ -11,7 +11,6 @@ v1_router.register(r'tags', TagViewSet, basename='tags')
 v1_router.register(r'recipes', RecipeViewSet, basename='recipes')
 v1_router.register(r'ingredients', IngredientViewSet, basename='ingredients')
 v1_router.register(r'ingredientsinrecipes', IngredientInRecipeViewSet, basename='ingredientsinrecipes')
-v1_router.register(r'shoppingcart', ShoppingCartViewSet, basename='shoppingcart')
 v1_router.register(r'favorites', FavoritesViewSet, basename='favorites')
 v1_router.register(r'users', UserViewSet, basename='users')
 
