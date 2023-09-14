@@ -4,11 +4,6 @@ from django.db import models
 from foodgram.settings import SLICE_OF_TEXT, SLICE_OF_TEXT_LONG
 from .validators import validate_username
 
-# user взял из api_yamdb
-# ROLE_CHOICES = (
-#     ('user', 'Пользователь'),
-#     ('admin', 'Администратор'),
-# )
 
 class User(AbstractUser):
     email = models.EmailField(
@@ -57,15 +52,6 @@ class User(AbstractUser):
     )
 
 
-
-    # @property
-    # def is_user(self):
-    #     return self.role == 'user'
-
-    # @property
-    # def is_admin(self):
-    #     return self.role == 'admin'
-
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
@@ -80,7 +66,6 @@ class User(AbstractUser):
         return self.username[:SLICE_OF_TEXT]
 
 
-# follow взял из hw5_final
 class Follow(models.Model):
     user = models.ForeignKey(
         User,

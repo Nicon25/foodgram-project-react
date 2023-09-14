@@ -19,10 +19,9 @@ from users.models import User, Follow
 from recipes.models import Tag, Recipe, Ingredient, IngredientInRecipe, ShoppingCart, Favorites
 #from .filters import TitleFilter
 from .permissions import (IsAuthorOrReadOnly)
-from .serializers import (ChangePasswordSerializer, CustomUserCreateSerializer, UserSerializer, FollowSerializer, TagSerializer, RecipeSerializer, IngredientSerializer, IngredientInRecipeSerializer, FavoritesSerializer)
+from .serializers import (ChangePasswordSerializer, CustomUserCreateSerializer, UserSerializer, FollowSerializer, TagSerializer, RecipeSerializer, IngredientSerializer, IngredientInRecipeSerializer, FavoritesSerializer, SubscriptionSerializer)
 
 
-# взял из api_yambd
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -80,6 +79,49 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({'detail': 'Пользователь не авторизован.'}, status=status.HTTP_401_UNAUTHORIZED)
         # Сериализуем профиль пользователя и возвращаем его
         serializer = UserSerializer(user)
+        return Response(serializer.data)
+
+    # Добавляем/удаляем подписки
+    @action(detail=True, methods=['post', 'delete'], url_path='subscribe', permission_classes=[permissions.IsAuthenticated])
+    def subscribe(self, request, pk=None):
+        target_user = self.get_object()
+        user = request.user
+
+        if request.method == 'POST':
+            if target_user == user:
+                return Response({'detail': 'Вы не можете подписаться на себя.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            if Follow.objects.filter(user=user, author=target_user).exists():
+                return Response({'detail': 'Вы уже подписаны на этого пользователя.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            Follow.objects.create(user=user, author=target_user)
+        
+            target_user.is_subscribed = True
+            target_user.save()
+            
+            return Response({'detail': 'Вы подписались на пользователя.'}, status=status.HTTP_201_CREATED)
+
+        elif request.method == 'DELETE':
+            if not Follow.objects.filter(user=user, author=target_user).exists():
+                return Response({'detail': 'Вы не подписаны на этого пользователя.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            Follow.objects.filter(user=user, author=target_user).delete()
+            
+            if not Follow.objects.filter(user=user).exists():
+                target_user.is_subscribed = False
+                target_user.save()
+            
+            return Response({'detail': 'Вы отписались от пользователя.'}, status=status.HTTP_204_NO_CONTENT)
+
+    
+    # Выводим список подписок текущего пользователя
+    @action(detail=False, methods=['get'], url_path='subscriptions', permission_classes=[permissions.IsAuthenticated])
+    def subscriptions(self, request):
+        user = request.user
+        follows = User.objects.filter(following__user=user)
+        serializer = SubscriptionSerializer(
+            follows, many=True,
+            context={'request': request})
         return Response(serializer.data)
 
 class FollowViewSet(viewsets.ModelViewSet):

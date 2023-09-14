@@ -1,6 +1,7 @@
 from django.forms import ValidationError
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
+from rest_framework.fields import SerializerMethodField
 from djoser.serializers import UserCreateSerializer
 
 from users.models import User, Follow
@@ -9,10 +10,11 @@ import base64
 
 from django.core.files.base import ContentFile
 
-# взял из api_yambd
 class UserSerializer(serializers.ModelSerializer):
+    is_subscribed = SerializerMethodField(read_only=True)
+
     class Meta:
-        fields = ('email', 'username', 'first_name', 'last_name', 'password')
+        fields = ('email', 'id', 'username', 'first_name', 'last_name', 'is_subscribed')
         model = User
 
     def create(self, validated_data):
@@ -24,6 +26,11 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
     
+    def get_is_subscribed(self, object):
+        user = self.context.get('request').user
+        if user.is_anonymous:
+            return False
+        return Follow.objects.filter(user=user, author=object.id).exists()
 
 class CustomUserCreateSerializer(UserCreateSerializer):
     class Meta(UserCreateSerializer.Meta):
@@ -95,115 +102,31 @@ class FavoritesSerializer(serializers.ModelSerializer):
         fields = ('__all__')
         model = Favorites
 
-# class AdminUserSerializer(serializers.ModelSerializer):
+class RecipeForSubscriptionSerializer(serializers.ModelSerializer):
+    image = Base64ImageField(required=False, allow_null=True)
+    class Meta:
+        fields = ('name', 'image', 'cooking_time')
+        model = Recipe
 
-#     class Meta:
-#         model = User
-#         fields = (
-#             'username', 'email', 'first_name', 'last_name', 'bio', 'role',
-#         )
+class SubscriptionSerializer(serializers.ModelSerializer):
+    recipes = SerializerMethodField(read_only=True)
+    recipes_count = SerializerMethodField(read_only=True)
 
-#     def validate_username(self, value):
-#         if value == 'me':
-#             raise serializers.ValidationError(
-#                 'Имя пользователя "me" не разрешено.'
-#             )
-#         return value
+    class Meta():
+        fields = ('email', 'id', 'username', 'first_name', 'last_name', 'is_subscribed', 'recipes', 'recipes_count')
+        model = User
 
+    def get_recipes(self, object):
+        request = self.context.get('request')
+        context = {'request': request}
+        recipe_limit = request.query_params.get('recipe_limit')
+        queryset = Recipe.objects.filter(author=object)
+        
+        if recipe_limit:
+            queryset = queryset[:int(recipe_limit)]
+        return RecipeForSubscriptionSerializer(queryset, many=True, context=context).data
 
-# class CategorySerializer(serializers.ModelSerializer):
-#     class Meta:
-#         fields = ('name', 'slug')
-#         model = Category
-#         lookup_field = 'slug'
-
-
-# class GenreSerializer(serializers.ModelSerializer):
-
-#     class Meta:
-#         fields = ('name', 'slug')
-#         model = Genre
-#         lookup_field = 'slug'
+    def get_recipes_count(self, object):
+        return Recipe.objects.filter(author=object).count()
 
 
-# class TitleReadSerializer(serializers.ModelSerializer):
-#     category = CategorySerializer(read_only=True)
-#     genre = GenreSerializer(
-#         read_only=True,
-#         many=True
-#     )
-#     rating = serializers.IntegerField(read_only=True)
-
-#     class Meta:
-#         fields = ('id', 'name', 'year', 'description',
-#                   'genre', 'category', 'rating',)
-#         model = Title
-
-
-# class TitleWriteSerializer(serializers.ModelSerializer):
-#     category = serializers.SlugRelatedField(
-#         queryset=Category.objects.all(),
-#         slug_field='slug'
-#     )
-#     genre = serializers.SlugRelatedField(
-#         queryset=Genre.objects.all(),
-#         slug_field='slug',
-#         many=True
-#     )
-
-#     class Meta:
-#         fields = ('id', 'name', 'year', 'description',
-#                   'genre', 'category')
-#         model = Title
-
-
-# class ReviewSerializer(serializers.ModelSerializer):
-
-#     title = serializers.SlugRelatedField(
-#         slug_field='name',
-#         read_only=True
-#     )
-
-#     author = serializers.SlugRelatedField(
-#         slug_field='username',
-#         read_only=True,
-#         default=serializers.CurrentUserDefault()
-#     )
-
-#     def validate_score(self, value):
-#         if value < 0 or value > 10:
-#             raise serializers.ValidationError(
-#                 'Оценка должна быть целым числом(от 1 до 10)'
-#             )
-#         return value
-
-#     def validate(self, data):
-#         request = self.context['request']
-#         author = request.user
-#         title_id = self.context.get('view').kwargs.get('title_id')
-#         title = get_object_or_404(Title, pk=title_id)
-#         if (
-#             request.method == 'POST'
-#             and Review.objects.filter(title=title, author=author).exists()
-#         ):
-#             raise ValidationError('Можно оставить только один отзыв')
-#         return data
-
-#     class Meta:
-#         fields = '__all__'
-#         model = Review
-
-
-# class CommentSerializer(serializers.ModelSerializer):
-#     review = serializers.SlugRelatedField(
-#         slug_field='text',
-#         read_only=True
-#     )
-#     author = serializers.SlugRelatedField(
-#         slug_field='username',
-#         read_only=True
-#     )
-
-#     class Meta:
-#         fields = '__all__'
-#         model = Comment
