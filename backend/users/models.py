@@ -44,7 +44,6 @@ class User(AbstractUser):
         verbose_name='Пароль',
         help_text='Информация о пароле',
     )
-
     is_subscribed = models.BooleanField(
         default=False,
         verbose_name="Подписка на автора",

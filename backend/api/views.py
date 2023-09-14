@@ -17,7 +17,7 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from foodgram.settings import ADMIN_EMAIL
 from users.models import User, Follow
 from recipes.models import Tag, Recipe, Ingredient, IngredientInRecipe, ShoppingCart, Favorites
-#from .filters import TitleFilter
+from .filters import RecipeFilter
 from .permissions import (IsAuthorOrReadOnly)
 from .serializers import (ChangePasswordSerializer, CustomUserCreateSerializer, UserSerializer, FollowSerializer, TagSerializer, RecipeSerializer, IngredientSerializer, IngredientInRecipeSerializer, FavoritesSerializer, SubscriptionSerializer)
 
@@ -139,7 +139,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('author', 'tags') # добавить по избранному, списку покупок
+    filterset_class = RecipeFilter
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:

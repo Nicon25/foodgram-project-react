@@ -11,7 +11,6 @@ import base64
 from django.core.files.base import ContentFile
 
 class UserSerializer(serializers.ModelSerializer):
-    is_subscribed = SerializerMethodField(read_only=True)
 
     class Meta:
         fields = ('email', 'id', 'username', 'first_name', 'last_name', 'is_subscribed')
@@ -25,12 +24,6 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
-    
-    def get_is_subscribed(self, object):
-        user = self.context.get('request').user
-        if user.is_anonymous:
-            return False
-        return Follow.objects.filter(user=user, author=object.id).exists()
 
 class CustomUserCreateSerializer(UserCreateSerializer):
     class Meta(UserCreateSerializer.Meta):
@@ -80,9 +73,24 @@ class Base64ImageField(serializers.ImageField):
 class RecipeSerializer(serializers.ModelSerializer):
     image = Base64ImageField(required=False, allow_null=True)
     author = serializers.CharField(read_only=True)
+    is_favorited = serializers.SerializerMethodField()
+    is_in_shopping_cart = serializers.SerializerMethodField()
+
     class Meta:
-        fields = ('__all__')
+        fields = ('id', 'tags', 'author', 'ingredients', 'is_favorited', 'is_in_shopping_cart', 'name', 'image', 'text', 'cooking_time')
         model = Recipe
+
+    def get_is_favorited(self, object):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return object.is_favorited.filter(user=request.user).exists()
+        return False
+
+    def get_is_in_shopping_cart(self, object):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return object.is_in_shopping_cart.filter(user=request.user).exists()
+        return False
 
 
 class IngredientSerializer(serializers.ModelSerializer):
