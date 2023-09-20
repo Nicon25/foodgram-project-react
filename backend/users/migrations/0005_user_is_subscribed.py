@@ -4,15 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('users', '0004_remove_user_is_subscribed'),
+        ("users", "0004_remove_user_is_subscribed"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='is_subscribed',
-            field=models.BooleanField(default=False, help_text='Информация подписан ли пользователь на автора', verbose_name='Подписка на автора'),
+            model_name="user",
+            name="is_subscribed",
+            field=models.BooleanField(
+                default=False,
+                help_text="Информация подписан ли пользователь на автора",
+                verbose_name="Подписка на автора",
+            ),
         ),
     ]

@@ -4,14 +4,16 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('recipes', '0001_initial'),
+        ("recipes", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='shoppingcart',
-            options={'verbose_name': 'Рецепт, добавленный в список покупок', 'verbose_name_plural': 'Рецепты, добавленые в список покупок'},
+            name="shoppingcart",
+            options={
+                "verbose_name": "Рецепт, добавленный в список покупок",
+                "verbose_name_plural": "Рецепты, добавленые в список покупок",
+            },
         ),
     ]
