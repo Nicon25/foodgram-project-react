@@ -113,15 +113,15 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Delete existing docker-compose.production.yml on remote server
-    uses: appleboy/ssh-action@master
-    with:
-      host: ${{ secrets.HOST }}
-      username: ${{ secrets.USER }}
-      key: ${{ secrets.SSH_KEY }}
-      passphrase: ${{ secrets.SSH_PASSPHRASE }}
-      script: |
-        cd foodgram-project-react
-        rm -f docker-compose.production.yml
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USER }}
+        key: ${{ secrets.SSH_KEY }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }}
+        script: |
+          cd foodgram-project-react
+          rm -f docker-compose.production.yml
 
     - name: Copy docker-compose.production.yml via ssh
       uses: appleboy/scp-action@master
