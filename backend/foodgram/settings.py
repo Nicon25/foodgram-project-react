@@ -10,7 +10,7 @@ env.read_env(os.path.join(BASE_DIR.parent, '.env'))
 
 SECRET_KEY = 'django-insecure-u8r86g51+7^==y*sspxd+m=11s-)-&=gernfw5fdf2t)w)wz%y'
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOST', default=['127.0.0.1', 'localhost'])
 
@@ -61,7 +61,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 
-if DEBUG is False:
+if DEBUG:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -71,12 +71,6 @@ if DEBUG is False:
 else:
     DATABASES = {
         'default': {
-            # 'ENGINE': 'django.db.backends.postgresql',
-            # 'NAME': env('POSTGRES_DB', default='django'),
-            # 'USER': env('POSTGRES_USER', default='django'),
-            # 'PASSWORD': env('POSTGRES_PASSWORD', default=''),
-            # 'HOST': env('DB_HOST', default=''),
-            # 'PORT': env.int('DB_PORT', 5432)
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': os.getenv('POSTGRES_DB', 'django'),
             'USER': os.getenv('POSTGRES_USER', 'django'),
