@@ -5,8 +5,8 @@ on:
       - master
 
 jobs:
-  # tests:
-  #   runs-on: ubuntu-latest
+  tests:
+    runs-on: ubuntu-latest
 
   #   services:
   #     postgres:
@@ -104,10 +104,10 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: 
-      - build_and_push_to_docker_hub
-      - build_frontend_and_push_to_docker_hub
-      - build_gateway_and_push_to_docker_hub
+    # needs: 
+    #   - build_and_push_to_docker_hub
+    #   - build_frontend_and_push_to_docker_hub
+    #   - build_gateway_and_push_to_docker_hub
     steps:
     - name: Checkout repo
       uses: actions/checkout@v3
