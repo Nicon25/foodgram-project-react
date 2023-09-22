@@ -112,6 +112,17 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v3
 
+    - name: Delete existing docker-compose.production.yml on remote server
+    uses: appleboy/ssh-action@master
+    with:
+      host: ${{ secrets.HOST }}
+      username: ${{ secrets.USER }}
+      key: ${{ secrets.SSH_KEY }}
+      passphrase: ${{ secrets.SSH_PASSPHRASE }}
+      script: |
+        cd foodgram-project-react
+        rm -f docker-compose.production.yml
+
     - name: Copy docker-compose.production.yml via ssh
       uses: appleboy/scp-action@master
       with:
@@ -120,7 +131,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         source: "infra/docker-compose.production.yml"
-        target: "foodgram-project-react/infra"
+        target: "foodgram-project-react"
 
     - name: Copy nginx.conf via ssh
       uses: appleboy/scp-action@master
@@ -130,7 +141,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         source: "infra/nginx.conf"
-        target: "foodgram-project-react/infra"
+        target: "foodgram-project-react"
 
     - name: Executing remote ssh commands to deploy
       uses: appleboy/ssh-action@master
