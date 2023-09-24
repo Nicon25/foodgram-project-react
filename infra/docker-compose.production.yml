@@ -42,10 +42,3 @@ services:
       - media:/etc/nginx/html/media/
     depends_on:
       - backend
-  # gateway:
-  #   image: nicon25/foodgram_gateway  # Качаем с Docker Hub
-  #   env_file: .env
-  #   volumes:
-  #     - static_volume:/staticfiles/
-  #   ports:
-  #     - 8000:80
