@@ -2,17 +2,17 @@
 version: '3'
 
 volumes:
-  pg_data_production:
+  pg_data:
   static_volume:
   media:
   static:
 
 services:
   db:
-    image: postgres:13
+    image: postgres:13.10
     env_file: .env
     volumes:
-      - pg_data_production:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data
   backend:
     image: nicon25/foodgram_backend
     restart: always
