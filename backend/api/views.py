@@ -71,7 +71,8 @@ class UserViewSet(viewsets.ModelViewSet):
         user.set_password(new_password)
         user.save()
         return Response(
-            {"message": "Пароль успешно изменен."}, status=status.HTTP_204_NO_CONTENT
+            {"message": "Пароль успешно изменен."},
+            status=status.HTTP_204_NO_CONTENT
         )
 
     # Удаление токена
@@ -185,6 +186,7 @@ class TagViewSet(viewsets.ModelViewSet):
         queryset = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()

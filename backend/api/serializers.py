@@ -32,7 +32,10 @@ class UserSerializer(serializers.ModelSerializer):
 
 class CustomUserCreateSerializer(UserCreateSerializer):
     class Meta(UserCreateSerializer.Meta):
-        fields = ("id", "email", "username", "first_name", "last_name", "password")
+        fields = (
+            "id", "email", "username",
+            "first_name", "last_name", "password"
+        )
 
 
 class ChangePasswordSerializer(serializers.Serializer):
