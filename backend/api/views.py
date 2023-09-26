@@ -335,53 +335,45 @@ class RecipeViewSet(viewsets.ModelViewSet):
     # Добавляем, удаляем рецепты в избранное
     @action(
         detail=True,
-        methods=["post", "delete"],
+        methods=["get", "post", "delete"],
         url_path="favorite",
         permission_classes=[permissions.IsAuthenticated],
     )
     def favorite(self, request, pk=None):
         recipe = self.get_object()
         user = request.user
+        favorite, created = Favorites.objects.get_or_create(
+            user=user, recipe=recipe
+        )
 
-        # Добавляем рецепт в избранное
         if request.method == "POST":
-            # Проверяем, что рецепт еще не добавлен в избранное
-            if Favorites.objects.filter(user=user, recipe=recipe).exists():
+            if created:
+                return Response(
+                    {"detail": "Рецепт добавлен в избранное."},
+                    status=status.HTTP_201_CREATED,
+                )
+            else:
                 return Response(
                     {"detail": "Рецепт уже добавлен в избранное."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            # Добавляем рецепт в избранное
-            Favorites.objects.create(user=user, recipe=recipe)
-
-            return Response(
-                {"detail": "Рецепт добавлен в избранное."},
-                status=status.HTTP_201_CREATED,
-            )
-
-        # Удаляем рецепт из избранного
         if request.method == "DELETE":
-            # Проверяем, что рецепт добавлен в избранное текущего пользователя
-            try:
-                favorites_item = Favorites.objects.get(
-                    user=user,
-                    recipe=recipe
+            if not created:
+                favorite.delete()
+                return Response(
+                    {"detail": "Рецепт удален из избранного."},
+                    status=status.HTTP_204_NO_CONTENT,
                 )
-            except Favorites.DoesNotExist:
+            else:
                 return Response(
                     {"detail": "Рецепт не найден в избранном."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            # Удаляем рецепт из избранного
-            favorites_item.delete()
-
-            return Response(
-                {"detail": "Рецепт удален из избранного."},
-                status=status.HTTP_204_NO_CONTENT,
-            )
-        return {}  # пока заглушка
+        if request.method == "GET":
+            is_favorite = not created
+            return Response({"is_favorite": is_favorite})
 
 
 class IngredientViewSet(viewsets.ModelViewSet):
