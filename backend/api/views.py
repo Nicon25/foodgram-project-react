@@ -14,7 +14,7 @@ from .filters import RecipeFilter
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (ChangePasswordSerializer, CustomUserCreateSerializer,
                           FavoritesSerializer, FollowSerializer,
-                          IngredientInRecipeSerializer, IngredientSerializer,
+                          IngredientSerializer, RecipeCreateSerializer,
                           RecipeSerializer, SubscriptionSerializer,
                           TagSerializer, UserSerializer)
 
@@ -212,6 +212,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
         # при создании рецепта
         serializer.save(author=self.request.user)
 
+    def get_serializer_class(self):
+        # Для операции создания используем RecipeCreateSerializer
+        if self.action in ["create", "partial_update", "destroy"]:
+            return RecipeCreateSerializer
+        # Для остальных операций используем RecipeSerializer
+        return RecipeSerializer
+
     # Добавляем, удаляем рецепты в список покупок
     @action(
         detail=True,
@@ -381,11 +388,6 @@ class IngredientViewSet(viewsets.ModelViewSet):
     ]
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
-
-
-class IngredientInRecipeViewSet(viewsets.ModelViewSet):
-    queryset = IngredientInRecipe.objects.all()
-    serializer_class = IngredientInRecipeSerializer
 
 
 class FavoritesViewSet(viewsets.ModelViewSet):
