@@ -11,6 +11,7 @@ from rest_framework.response import Response
 from users.models import Follow, User
 
 from .filters import RecipeFilter
+from .paginations import LimitPagination
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (ChangePasswordSerializer, CustomUserCreateSerializer,
                           FavoritesSerializer, FollowSerializer,
@@ -22,6 +23,7 @@ from .serializers import (ChangePasswordSerializer, CustomUserCreateSerializer,
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    pagination_class = LimitPagination
 
     def get_permissions(self):
         # Доступ для всех на просмотр юзеров и регистрации
@@ -194,6 +196,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
+    pagination_class = LimitPagination
 
     def get_permissions(self):
         # Доступ для всех на просмотр списка рецептов
