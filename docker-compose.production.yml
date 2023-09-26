@@ -1,4 +1,3 @@
-# djdj
 version: '3'
 
 volumes:
@@ -17,7 +16,7 @@ services:
     restart: always
     env_file: .env
     volumes:
-      - static:/backend_static
+      - static:/app/backend_static/
       - media:/app/media/
       - .data:/db_data
     depends_on:
