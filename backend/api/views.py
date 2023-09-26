@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from users.models import Follow, User
 
 from .filters import RecipeFilter
-from .paginations import LimitPagination
+from .pagination import LimitPagination
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (ChangePasswordSerializer, CustomUserCreateSerializer,
                           FavoritesSerializer, FollowSerializer,
