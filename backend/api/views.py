@@ -103,10 +103,12 @@ class UserViewSet(viewsets.ModelViewSet):
     def subscriptions(self, request):
         user = request.user
         follows = User.objects.filter(following__user=user)
+        paginator = LimitPagination()
+        result_page = paginator.paginate_queryset(follows, request)
         serializer = SubscriptionSerializer(
-            follows, many=True, context={"request": request}
+            result_page, many=True, context={"request": request}
         )
-        return Response(serializer.data)
+        return paginator.get_paginated_response(serializer.data)
 
     def get_serializer_class(self):
         # Сериализатор для смены пароля
@@ -188,7 +190,7 @@ class TagViewSet(viewsets.ModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, )
     filterset_class = RecipeFilter
     pagination_class = LimitPagination
 
