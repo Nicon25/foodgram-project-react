@@ -238,7 +238,9 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         queryset = Recipe.objects.filter(author=object)
 
         if recipe_limit:
-            queryset = queryset[: int(recipe_limit)]
+            queryset = queryset.annotate(
+                recipe_number=F("author__recipe_count")
+            ).filter(recipe_number__lte=int(recipe_limit))
         return RecipeForSubscriptionSerializer(
             queryset, many=True, context=context
         ).data
