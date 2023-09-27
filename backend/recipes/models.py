@@ -32,6 +32,7 @@ class Tag(models.Model):
     class Meta:
         verbose_name = "Тег"
         verbose_name_plural = "Теги"
+        ordering = ['-id']
         constraints = [
             models.UniqueConstraint(
                 fields=["slug"],
@@ -97,6 +98,7 @@ class Recipe(models.Model):
     class Meta:
         verbose_name = "Рецепт"
         verbose_name_plural = "Рецепты"
+        ordering = ['-id']
 
     def __str__(self):
         return self.name[:SLICE_OF_TEXT_LONG]
@@ -117,6 +119,7 @@ class Ingredient(models.Model):
     class Meta:
         verbose_name = "Ингредиент"
         verbose_name_plural = "Ингредиенты"
+        ordering = ['-id']
 
     def __str__(self):
         return f"{self.name} ({self.measurement_unit})"[:SLICE_OF_TEXT_LONG]
@@ -146,6 +149,7 @@ class IngredientInRecipe(models.Model):
     class Meta:
         verbose_name = "Ингредиент, используемый в рецепте"
         verbose_name_plural = "Ингредиенты, используемые в рецепте"
+        ordering = ['-id']
         constraints = [
             models.UniqueConstraint(
                 fields=["recipe", "ingredient"],
@@ -161,7 +165,7 @@ class ShoppingCart(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="user_shopping_cart",
+        related_name="is_in_shopping_cart",
         verbose_name="Пользователь",
         help_text="Информация о пользователе",
     )
@@ -176,6 +180,7 @@ class ShoppingCart(models.Model):
     class Meta:
         verbose_name = "Рецепт, добавленный в список покупок"
         verbose_name_plural = "Рецепты, добавленые в список покупок"
+        ordering = ['-id']
         constraints = [
             models.UniqueConstraint(
                 fields=["user", "recipe"],
@@ -194,7 +199,7 @@ class Favorites(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="favorite",
+        related_name="is_favorited",
         verbose_name="Пользователь",
         help_text="Информация о пользователе",
     )
