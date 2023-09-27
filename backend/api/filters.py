@@ -20,19 +20,22 @@ class RecipeFilter(django_filters.FilterSet):
 
     def filter_is_favorited(self, queryset, name, value):
         if value:
-            return queryset.filter(is_favorited=True)
-        return queryset.filter(is_favorited=False)
+            return queryset.filter(is_favorited__user=self.request.user)
+        return queryset.exclude(
+            is_favorited__user=self.request.user
+        )
 
     def filter_is_in_shopping_cart(self, queryset, name, value):
         if value:
-            return queryset.filter(is_in_shopping_cart=True)
-        return queryset.filter(is_in_shopping_cart=False)
+            return Recipe.objects.filter(
+                is_in_shopping_cart__user=self.request.user
+            )
 
     class Meta:
         model = Recipe
         fields = {
-            "author": ["exact"],
-            "tags": ["exact"],
-            'is_favorited': ["exact"],
-            'is_in_shopping_cart': ["exact"],
+            "author",
+            "tags",
+            'is_favorited',
+            'is_in_shopping_cart',
         }
