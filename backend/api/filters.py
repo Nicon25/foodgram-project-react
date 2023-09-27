@@ -37,6 +37,4 @@ class RecipeFilter(django_filters.FilterSet):
         fields = {
             "author",
             "tags",
-            'is_favorited',
-            'is_in_shopping_cart',
         }
