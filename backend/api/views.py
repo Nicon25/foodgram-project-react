@@ -329,7 +329,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     # Добавляем, удаляем рецепты в избранное
     @action(
         detail=True,
-        methods=["get", "post", "delete"],
+        methods=["post", "delete"],
         url_path="favorite",
         permission_classes=[permissions.IsAuthenticated],
     )
