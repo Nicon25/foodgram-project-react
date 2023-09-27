@@ -368,8 +368,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 )
 
         if request.method == "GET":
-            is_favorite = not created
-            return Response({"is_favorite": is_favorite})
+            is_favorited = not created
+            return Response({"is_favorited": is_favorited})
 
 
 class IngredientViewSet(viewsets.ModelViewSet):
