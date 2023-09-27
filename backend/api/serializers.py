@@ -240,7 +240,6 @@ class SubscriptionSerializer(serializers.ModelSerializer):
                 object.recipes.all()[:int(recipe_limit)], many=True,
             ).data
 
-
     def get_recipes_count(self, object):
         return Recipe.objects.filter(author=object).count()
 
