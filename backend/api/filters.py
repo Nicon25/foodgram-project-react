@@ -4,7 +4,6 @@ from recipes.models import Recipe
 
 class RecipeFilter(django_filters.FilterSet):
     is_favorited = django_filters.BooleanFilter(
-        
         method="filter_is_favorited",
     )
     is_in_shopping_cart = django_filters.BooleanFilter(
