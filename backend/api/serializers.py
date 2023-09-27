@@ -54,12 +54,6 @@ class ChangePasswordSerializer(serializers.Serializer):
         return data
 
 
-class FollowSerializer(serializers.ModelSerializer):
-    class Meta:
-        fields = "__all__"
-        model = Follow
-
-
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ("id", "name", "color", "slug")
@@ -220,20 +214,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         return data
 
 
-class RecipeForSubscriptionSerializer(serializers.ModelSerializer):
-    image = Base64ImageField(required=False, allow_null=True)
-
-    class Meta:
-        fields = ("name", "image", "cooking_time")
-        model = Recipe
-
-
-class FavoritesSerializer(serializers.ModelSerializer):
-    class Meta:
-        fields = "__all__"
-        model = Favorites
-
-
 class SubscriptionSerializer(serializers.ModelSerializer):
     recipes = SerializerMethodField(read_only=True)
     recipes_count = SerializerMethodField(read_only=True)
@@ -265,3 +245,17 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
     def get_recipes_count(self, object):
         return Recipe.objects.filter(author=object).count()
+
+
+class RecipeForSubscriptionSerializer(serializers.ModelSerializer):
+    image = Base64ImageField(required=False, allow_null=True)
+
+    class Meta:
+        fields = ("id", "name", "image", "cooking_time")
+        model = Recipe
+
+
+class FavoritesSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = "__all__"
+        model = Favorites

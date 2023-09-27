@@ -14,7 +14,6 @@ from .filters import RecipeFilter
 from .pagination import LimitPagination
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (ChangePasswordSerializer, CustomUserCreateSerializer,
-                          FavoritesSerializer, FollowSerializer,
                           IngredientSerializer, RecipeCreateSerializer,
                           RecipeSerializer, SubscriptionSerializer,
                           TagSerializer, UserSerializer)
@@ -38,68 +37,6 @@ class UserViewSet(viewsets.ModelViewSet):
             return [IsAuthorOrReadOnly()]
         # По умолчанию, требуется авторизация
         return [permissions.IsAuthenticated()]
-
-    def get_serializer_class(self):
-        # Сериализатор для смены пароля
-        if self.action == "set_password":
-            return ChangePasswordSerializer
-        # Сериализатор на создание пользователя
-        if self.action == "create":
-            return CustomUserCreateSerializer
-        # Сериализатор для работы с Users
-        return UserSerializer
-
-    @action(methods=["post"], detail=False)
-    def set_password(self, request):
-        # Проверяем, что пользователь авторизован
-        if not request.user.is_authenticated:
-            return Response(
-                {"error": "Пользователь не авторизован."},
-                status=status.HTTP_401_UNAUTHORIZED,
-            )
-        # Получаем текущего пользователя
-        user = request.user
-        # Получаем старый и новый пароль из данных запроса
-        current_password = request.data.get("current_password", None)
-        new_password = request.data.get("new_password", None)
-        # Проверяем, что старый пароль соответствует текущему
-        # паролю пользователя
-        if not user.check_password(current_password):
-            return Response(
-                {"error": "Неверный пароль."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        # Устанавливаем новый пароль
-        user.set_password(new_password)
-        user.save()
-        return Response(
-            {"message": "Пароль успешно изменен."},
-            status=status.HTTP_204_NO_CONTENT
-        )
-
-    # Удаление токена
-    @action(detail=False, methods=["post"])
-    def logout(self, request):
-        if IsAuthorOrReadOnly().has_object_permission(
-            request, self, request.auth
-        ):
-            request.auth.delete()
-            return Response(status=204)
-        return Response({"error": "Доступ запрещен."}, status=401)
-
-    # Возвращает текущего пользователя
-    @action(detail=False, methods=["get"])
-    def me(self, request):
-        # Получаем текущего залогиненного пользователя
-        user = request.user
-        if not user.is_authenticated:
-            return Response(
-                {"detail": "Пользователь не авторизован."},
-                status=status.HTTP_401_UNAUTHORIZED,
-            )
-        # Сериализуем профиль пользователя и возвращаем его
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
 
     # Добавляем/удаляем подписки
     @action(
@@ -171,10 +108,67 @@ class UserViewSet(viewsets.ModelViewSet):
         )
         return Response(serializer.data)
 
+    def get_serializer_class(self):
+        # Сериализатор для смены пароля
+        if self.action == "set_password":
+            return ChangePasswordSerializer
+        # Сериализатор на создание пользователя
+        if self.action == "create":
+            return CustomUserCreateSerializer
+        # Сериализатор для работы с Users
+        return UserSerializer
 
-class FollowViewSet(viewsets.ModelViewSet):
-    queryset = Follow.objects.all()
-    serializer_class = FollowSerializer
+    @action(methods=["post"], detail=False)
+    def set_password(self, request):
+        # Проверяем, что пользователь авторизован
+        if not request.user.is_authenticated:
+            return Response(
+                {"error": "Пользователь не авторизован."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        # Получаем текущего пользователя
+        user = request.user
+        # Получаем старый и новый пароль из данных запроса
+        current_password = request.data.get("current_password", None)
+        new_password = request.data.get("new_password", None)
+        # Проверяем, что старый пароль соответствует текущему
+        # паролю пользователя
+        if not user.check_password(current_password):
+            return Response(
+                {"error": "Неверный пароль."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        # Устанавливаем новый пароль
+        user.set_password(new_password)
+        user.save()
+        return Response(
+            {"message": "Пароль успешно изменен."},
+            status=status.HTTP_204_NO_CONTENT
+        )
+
+    # Удаление токена
+    @action(detail=False, methods=["post"])
+    def logout(self, request):
+        if IsAuthorOrReadOnly().has_object_permission(
+            request, self, request.auth
+        ):
+            request.auth.delete()
+            return Response(status=204)
+        return Response({"error": "Доступ запрещен."}, status=401)
+
+    # Возвращает текущего пользователя
+    @action(detail=False, methods=["get"])
+    def me(self, request):
+        # Получаем текущего залогиненного пользователя
+        user = request.user
+        if not user.is_authenticated:
+            return Response(
+                {"detail": "Пользователь не авторизован."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        # Сериализуем профиль пользователя и возвращаем его
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
 
 
 class TagViewSet(viewsets.ModelViewSet):
@@ -385,8 +379,3 @@ class IngredientViewSet(viewsets.ModelViewSet):
     ]
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
-
-
-class FavoritesViewSet(viewsets.ModelViewSet):
-    queryset = Favorites.objects.all()
-    serializer_class = FavoritesSerializer
