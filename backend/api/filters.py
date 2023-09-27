@@ -4,14 +4,14 @@ from recipes.models import Recipe
 
 class RecipeFilter(django_filters.FilterSet):
     is_favorited = django_filters.BooleanFilter(
-        field_name="is_favorited",
+        # field_name="is_favorited",
         method="filter_is_favorited",
-        label="is_favorited",
+        # label="is_favorited",
     )
     is_in_shopping_cart = django_filters.BooleanFilter(
-        field_name="is_in_shopping_cart",
+        # field_name="is_in_shopping_cart",
         method="filter_is_in_shopping_cart",
-        label="is_in_shopping_cart",
+        # label="is_in_shopping_cart",
     )
     tags = django_filters.AllValuesMultipleFilter(
         field_name='tags__slug',
@@ -21,14 +21,14 @@ class RecipeFilter(django_filters.FilterSet):
     def filter_is_favorited(self, queryset, name, value):
         if value and self.request.user.is_authenticated:
             return queryset.filter(
-                is_favorited__user=self.request.user
+                favorite__user=self.request.user
             )
         return queryset
 
     def filter_is_in_shopping_cart(self, queryset, name, value):
         if value and self.request.user.is_authenticated:
             return queryset.filter(
-                is_in_shopping_cart__user=self.request.user
+                shopping_cart__user=self.request.user
             )
         return queryset
 
