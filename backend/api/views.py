@@ -5,12 +5,12 @@ from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from recipes.models import (Favorites, Ingredient, IngredientInRecipe, Recipe,
                             ShoppingCart, Tag)
-from rest_framework import filters, permissions, status, viewsets
+from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from users.models import Follow, User
 
-from .filters import RecipeFilter
+from .filters import IngredientFilter, RecipeFilter
 from .pagination import LimitPagination
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (ChangePasswordSerializer, CustomUserCreateSerializer,
@@ -376,5 +376,5 @@ class IngredientViewSet(viewsets.ModelViewSet):
     permission_classes = [
         permissions.AllowAny,
     ]
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ("name",)
+    filter_backends = [IngredientFilter, ]
+    search_fields = ['^name', ]

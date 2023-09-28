@@ -1,5 +1,6 @@
 from django_filters import rest_framework as filters
 from recipes.models import Recipe
+from rest_framework.filters import SearchFilter
 
 
 class RecipeFilter(filters.FilterSet):
@@ -36,3 +37,7 @@ class RecipeFilter(filters.FilterSet):
             "is_favorited",
             "is_in_shopping_cart",
         }
+
+
+class IngredientFilter(SearchFilter):
+    search_param = 'name'

@@ -276,7 +276,7 @@ class RecipeForSubscriptionSerializer(serializers.ModelSerializer):
         model = Recipe
 
 
-class FavoritesSerializer(serializers.ModelSerializer):
-    class Meta:
-        fields = "__all__"
-        model = Favorites
+# class FavoritesSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         fields = "__all__"
+#         model = Favorites
