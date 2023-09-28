@@ -84,16 +84,6 @@ class Recipe(models.Model):
         verbose_name="Автор рецепта",
         help_text="Информация об авторе рецепта",
     )
-    # is_favorited = models.BooleanField(
-    #     default=False,
-    #     verbose_name="Рецепт в избранном",
-    #     help_text='Информация добавлен ли рецепт в избранное',
-    # )
-    # is_in_shopping_cart = models.BooleanField(
-    #     default=False,
-    #     verbose_name="Рецепт в списке покупок",
-    #     help_text='Информация добавлен ли рецепт в список покупок',
-    # )
 
     class Meta:
         verbose_name = "Рецепт"
@@ -119,7 +109,6 @@ class Ingredient(models.Model):
     class Meta:
         verbose_name = "Ингредиент"
         verbose_name_plural = "Ингредиенты"
-        ordering = ['-id']
 
     def __str__(self):
         return f"{self.name} ({self.measurement_unit})"[:SLICE_OF_TEXT_LONG]

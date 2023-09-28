@@ -4,7 +4,7 @@ from django.core.files.base import ContentFile
 from django.db.models import F
 from djoser.serializers import UserCreateSerializer
 from recipes.models import (Favorites, Ingredient, IngredientInRecipe, Recipe,
-                            Tag)
+                            ShoppingCart, Tag)
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from users.models import Follow, User
@@ -132,19 +132,21 @@ class RecipeSerializer(serializers.ModelSerializer):
         )
         return ingredients
 
-    def get_is_favorited(self, object):
-        request = self.context.get("request")
-        if request and request.user.is_authenticated:
-            return object.is_favorited.filter(user=request.user).exists()
-        return False
+    def get_is_favorited(self, obj):
+        request = self.context.get('request')
+        if request is None or request.user.is_anonymous:
+            return False
+        return Favorites.objects.filter(
+            user=request.user, recipe_id=obj
+        ).exists()
 
-    def get_is_in_shopping_cart(self, object):
-        request = self.context.get("request")
-        if request and request.user.is_authenticated:
-            return object.is_in_shopping_cart.filter(
-                user=request.user
-            ).exists()
-        return False
+    def get_is_in_shopping_cart(self, obj):
+        request = self.context.get('request')
+        if request is None or request.user.is_anonymous:
+            return False
+        return ShoppingCart.objects.filter(
+            user=request.user, recipe_id=obj
+        ).exists()
 
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
