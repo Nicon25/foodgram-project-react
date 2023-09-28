@@ -7,7 +7,7 @@ from recipes.models import (Favorites, Ingredient, IngredientInRecipe, Recipe,
                             Tag)
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
-from users.models import User, Follow
+from users.models import Follow, User
 
 
 class UserSerializer(serializers.ModelSerializer):
