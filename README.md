@@ -96,5 +96,18 @@ docker-compose -f docker-compose.production.yml exec backend python manage.py lo
 ```bash
 https://edagram.ddns.net/
 ```
+## Тестовые пользователи
+username: nicon (superuser)
+email: nic@nic.com
+password: parol12345
+
+username: user1
+email: user1@gmail.com
+password: parol12345
+
+username: user2
+email: user2@gmail.com
+password: parol12345
+
 ## Автор
 **[Николай Потапов](https://github.com/Nicon25)**
