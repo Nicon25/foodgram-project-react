@@ -77,7 +77,7 @@ class Base64ImageField(serializers.ImageField):
             # И извлечь расширение файла.
             ext = format.split("/")[-1]
             # Затем декодировать сами данные и поместить результат в файл,
-            # которому дать название по шаблону.
+            # которому дать название по шаблону
             data = ContentFile(base64.b64decode(imgstr), name="temp." + ext)
 
         return super().to_internal_value(data)
