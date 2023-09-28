@@ -7,11 +7,11 @@ from recipes.models import (Favorites, Ingredient, IngredientInRecipe, Recipe,
                             Tag)
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
-from users.models import User
+from users.models import User, Follow
 
 
 class UserSerializer(serializers.ModelSerializer):
-    is_subscribed = serializers.SerializerMethodField()
+    is_subscribed = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         fields = (
@@ -33,8 +33,12 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
     def get_is_subscribed(self, object):
-        user = self.context.get('request').user
-        return object.follower.filter(user=user).exists()
+        request = self.context.get('request')
+        if request or request.user.is_authenticated:
+            return Follow.objects.filter(
+                user=request.user, author=object
+            ).exists()
+        return False
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
