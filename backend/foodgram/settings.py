@@ -10,7 +10,7 @@ env.read_env(os.path.join(BASE_DIR.parent, '.env'))
 
 SECRET_KEY = 'django-insecure-u8r86g51+7^==y*sspxd+m=11s-)-&=gernfw5fdf2t)w)wz%y'
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOST', default=['127.0.0.1', 'localhost'])
 
@@ -126,7 +126,10 @@ REST_FRAMEWORK = {
 
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 6,
-
+    
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ],
 }
 
 DJOSER = {

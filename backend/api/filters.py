@@ -1,15 +1,15 @@
-import django_filters
+from django_filters import rest_framework as filters
 from recipes.models import Recipe
 
 
-class RecipeFilter(django_filters.FilterSet):
-    is_favorited = django_filters.BooleanFilter(
+class RecipeFilter(filters.FilterSet):
+    is_favorited = filters.BooleanFilter(
         method="filter_is_favorited",
     )
-    is_in_shopping_cart = django_filters.BooleanFilter(
+    is_in_shopping_cart = filters.BooleanFilter(
         method="filter_is_in_shopping_cart",
     )
-    tags = django_filters.AllValuesMultipleFilter(
+    tags = filters.AllValuesMultipleFilter(
         field_name='tags__slug',
         label='tags',
     )
