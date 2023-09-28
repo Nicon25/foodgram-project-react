@@ -26,11 +26,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         # Доступ для всех на просмотр юзеров и регистрации
-        if self.action in ["list", "create"]:
+        if self.action in ["list", "create", "retrieve"]:
             return [permissions.AllowAny()]
-        # Только авторизованные могут просматривать профили пользователей
-        if self.action == "retrieve":
-            return [permissions.IsAuthenticated()]
         # Только владелец аккаунта может смены пароли и
         # просматривать свой профиль
         if self.action in ["set_password", "me"]:
