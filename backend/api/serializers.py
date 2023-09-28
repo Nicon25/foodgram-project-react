@@ -34,11 +34,11 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_is_subscribed(self, object):
         request = self.context.get('request')
-        if request or request.user.is_authenticated:
-            return Follow.objects.filter(
-                user=request.user, author=object
-            ).exists()
-        return False
+        if request is None or request.user.is_anonymous:
+            return False
+        return Follow.objects.filter(
+            user=request.user, author=object
+        ).exists()
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
