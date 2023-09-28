@@ -11,6 +11,8 @@ from users.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    is_subscribed = serializers.SerializerMethodField()
+
     class Meta:
         fields = (
             "email",
@@ -29,6 +31,10 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(validated_data["password"])
         user.save()
         return user
+
+    def get_is_subscribed(self, object):
+        user = self.context.get('request').user
+        return object.follower.filter(user=user).exists()
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):

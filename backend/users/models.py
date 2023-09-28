@@ -44,11 +44,11 @@ class User(AbstractUser):
         verbose_name="Пароль",
         help_text="Информация о пароле",
     )
-    is_subscribed = models.BooleanField(
-        default=False,
-        verbose_name="Подписка на автора",
-        help_text="Информация подписан ли пользователь на автора",
-    )
+    # is_subscribed = models.BooleanField(
+    #     default=False,
+    #     verbose_name="Подписка на автора",
+    #     help_text="Информация подписан ли пользователь на автора",
+    # )
 
     class Meta:
         verbose_name = "Пользователь"
