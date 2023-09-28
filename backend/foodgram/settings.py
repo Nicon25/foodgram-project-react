@@ -152,7 +152,3 @@ SLICE_OF_TEXT = 15
 SLICE_OF_TEXT_LONG = 75
 
 AUTH_USER_MODEL = 'users.User'
-
-ADMIN_EMAIL = 'potapov.nikolai.v@gmail.com'
-
-LOGIN_URL = '/api/auth/token/login/'

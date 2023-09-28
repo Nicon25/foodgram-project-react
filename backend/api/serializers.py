@@ -274,9 +274,3 @@ class RecipeForSubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ("id", "name", "image", "cooking_time")
         model = Recipe
-
-
-# class FavoritesSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         fields = "__all__"
-#         model = Favorites
