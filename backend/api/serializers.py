@@ -134,10 +134,10 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def is_object_in_list(self, object, list_model):
         request = self.context.get('request')
-        
+
         if request is None or request.user.is_anonymous:
             return False
-        
+
         return list_model.objects.filter(
             user=request.user,
             recipe_id=object
