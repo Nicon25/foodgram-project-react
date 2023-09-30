@@ -1,6 +1,23 @@
 # Проект Foodgram
 Foodgram — это сайт, на котором пользователи могут публиковать рецепты, добавлять чужие рецепты в избранное и подписываться на публикации других авторов. Пользователям сайта также будет доступен сервис «Список покупок». Он позволит создавать список продуктов, которые нужно купить для приготовления выбранных блюд.
 
+## Текущий проект доступен по ссылке:
+```bash
+https://edagram.ddns.net/
+```
+## Тестовые пользователи
+username: nicon (superuser)
+email: nic@nic.com
+password: parol12345
+
+username: user1
+email: user1@gmail.com
+password: parol12345
+
+username: user2
+email: user2@gmail.com
+password: parol12345
+
 ## Запуск проекта
 
 ### Настройка GitHub 
@@ -91,23 +108,6 @@ docker-compose -f docker-compose.production.yml exec backend python manage.py lo
 - Nginx
 - Docker
 - Github Actions
-
-## Текущий проект доступен по ссылке:
-```bash
-https://edagram.ddns.net/
-```
-## Тестовые пользователи
-username: nicon (superuser)
-email: nic@nic.com
-password: parol12345
-
-username: user1
-email: user1@gmail.com
-password: parol12345
-
-username: user2
-email: user2@gmail.com
-password: parol12345
 
 ## Автор
 **[Николай Потапов](https://github.com/Nicon25)**
