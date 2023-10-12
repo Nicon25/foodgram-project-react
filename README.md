@@ -30,7 +30,7 @@ git clone git@github.com:Nicon25/foodgram-project-react.git
     SSH_PASSPHRASE=<passphrase of your remote server>
     TELEGRAM_TO=<your Telegram account ID>
     TELEGRAM_TOKEN=<your Telegram bot token>
-    USER=<username for connecting to the remote server>  
+    USER=<'username for connecting to the remote server'>  
 ```
 
 ### Remote Server Setup
@@ -93,6 +93,6 @@ docker-compose -f docker-compose.production.yml exec backend python manage.py lo
 
 ## Available pages
 After completing the above actions, the project will be accessible through the following links
-- Main page: http://<your domain>/
-- API: http://<your domain>/api/
-- Admin: http://<your domain>/admin/
+- Main page: http://<'your domain'>/
+- API: http://<'your domain'>/api/
+- Admin: http://<'your domain'>/admin/
