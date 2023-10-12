@@ -2,10 +2,6 @@ from rest_framework import permissions
 
 
 class IsAuthorOrReadOnly(permissions.BasePermission):
-    """
-    Дает доступ автору
-    Для остальных только GET
-    """
     def has_permission(self, request, view):
         user = request.user
         return (

@@ -11,8 +11,8 @@ class User(AbstractUser):
         unique=True,
         blank=False,
         null=False,
-        verbose_name="Адрес электронной почты",
-        help_text="Информация о адресе электронной почты",
+        verbose_name="Email",
+        help_text="Email info",
     )
     username = models.CharField(
         validators=(validate_username,),
@@ -20,27 +20,27 @@ class User(AbstractUser):
         unique=True,
         blank=False,
         null=False,
-        verbose_name="Уникальный юзернейм",
-        help_text="Информация о юзернейме",
+        verbose_name="Unique username",
+        help_text="Username info",
     )
     first_name = models.CharField(
         max_length=150,
         blank=False,
         null=False,
-        verbose_name="Имя",
-        help_text="Информация о имени пользователя",
+        verbose_name="First name",
+        help_text="First name info",
     )
     last_name = models.CharField(
         max_length=150,
         blank=False,
         null=False,
-        verbose_name="Фамилия",
-        help_text="Информация о фамилии пользователя",
+        verbose_name="Last name",
+        help_text="Last name info",
     )
 
     class Meta:
-        verbose_name = "Пользователь"
-        verbose_name_plural = "Пользователи"
+        verbose_name = "User"
+        verbose_name_plural = "Users"
         ordering = ('-id',)
         constraints = [
             models.UniqueConstraint(
@@ -57,20 +57,20 @@ class Follow(models.Model):
         User,
         related_name="follower",
         on_delete=models.CASCADE,
-        verbose_name="Подписчик",
-        help_text="Информация о подписчике",
+        verbose_name="Follower",
+        help_text="Follower info",
     )
     author = models.ForeignKey(
         User,
         related_name="following",
         on_delete=models.CASCADE,
-        verbose_name="Автор",
-        help_text="Информация об авторе",
+        verbose_name="Author",
+        help_text="Author info",
     )
 
     class Meta:
-        verbose_name = "Подписки"
-        verbose_name_plural = "Подписки"
+        verbose_name = "Subscription"
+        verbose_name_plural = "Subscriptions"
 
         constraints = [
             models.UniqueConstraint(

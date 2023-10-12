@@ -59,7 +59,7 @@ class ChangePasswordSerializer(serializers.Serializer):
     def validate(self, data):
         if data["current_password"] == data["new_password"]:
             raise serializers.ValidationError(
-                "Новый пароль должен отличаться от старого."
+                "Тew password must be different from the old one."
             )
         return data
 
@@ -202,20 +202,20 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
         if len(ingredients) < 1:
             raise serializers.ValidationError(
-                'Добавьте хотя бы один ингредиент'
+                'Add at least one ingredient'
             )
 
         for ingredient in ingredients:
             name = ingredient['id']
             if name in distinct_ingredients:
                 raise serializers.ValidationError(
-                    f'В рецепт добавлен повторяющийся ингредиент - {name}'
+                    f'A repeated ingredient has been added to the recipe - {name}'
                 )
             else:
                 distinct_ingredients.append(name)
             if int(ingredient['amount']) <= 0:
                 raise serializers.ValidationError(
-                    f'Указано не корректное количество ингредиента - {name}'
+                    f'An incorrect quantity of the ingredient is specified - {name}'
                 )
         return data
 

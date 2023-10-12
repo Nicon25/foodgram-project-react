@@ -23,5 +23,5 @@ class Command(BaseCommand):
                         name=name, measurement_unit=measurement_unit
                     )
         self.stdout.write(self.style.SUCCESS(
-            "Данные из CSV файла успешно загружены"
+            "Data from the CSV file has been successfully loaded"
         ))

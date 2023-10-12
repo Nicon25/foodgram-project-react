@@ -6,11 +6,11 @@ from django.core.exceptions import ValidationError
 def validate_username(value):
     if value == "me":
         raise ValidationError(
-            ("Юзернейм не может быть <me>."),
+            ("The username cannot be <me>."),
             params={"value": value},
         )
     if re.search(r"^[\w.@+-]+$", value) is None:
         raise ValidationError(
-            (f"Не допустимые символы <{value}> в юзернейме."),
+            (f"The characters <{value}> are not allowed in the username."),
             params={"value": value},
         )

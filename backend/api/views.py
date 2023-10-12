@@ -44,13 +44,13 @@ class UserViewSet(viewsets.ModelViewSet):
         if request.method == "POST":
             if target_user == user:
                 return Response(
-                    {"detail": "Вы не можете подписаться на себя."},
+                    {"detail": "You cannot subscribe to yourself."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
             if Follow.objects.filter(user=user, author=target_user).exists():
                 return Response(
-                    {"detail": "Вы уже подписаны на этого пользователя."},
+                    {"detail": "You are already subscribed to this user."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -60,7 +60,7 @@ class UserViewSet(viewsets.ModelViewSet):
             target_user.save()
 
             return Response(
-                {"detail": "Вы подписались на пользователя."},
+                {"detail": "You have subscribed to the user."},
                 status=status.HTTP_201_CREATED,
             )
 
@@ -69,7 +69,7 @@ class UserViewSet(viewsets.ModelViewSet):
                 user=user, author=target_user
             ).exists():
                 return Response(
-                    {"detail": "Вы не подписаны на этого пользователя."},
+                    {"detail": "You are not subscribed to this user."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -80,7 +80,7 @@ class UserViewSet(viewsets.ModelViewSet):
                 target_user.save()
 
             return Response(
-                {"detail": "Вы отписались от пользователя."},
+                {"detail": "You have unsubscribed from the user."},
                 status=status.HTTP_204_NO_CONTENT,
             )
         return {}
@@ -112,7 +112,7 @@ class UserViewSet(viewsets.ModelViewSet):
     def set_password(self, request):
         if not request.user.is_authenticated:
             return Response(
-                {"error": "Пользователь не авторизован."},
+                {"error": "User is not authorized."},
                 status=status.HTTP_401_UNAUTHORIZED,
             )
         user = request.user
@@ -120,13 +120,13 @@ class UserViewSet(viewsets.ModelViewSet):
         new_password = request.data.get("new_password", None)
         if not user.check_password(current_password):
             return Response(
-                {"error": "Неверный пароль."},
+                {"error": "Incorrect password."},
                 status=status.HTTP_400_BAD_REQUEST
             )
         user.set_password(new_password)
         user.save()
         return Response(
-            {"message": "Пароль успешно изменен."},
+            {"message": "Password successfully changed."},
             status=status.HTTP_204_NO_CONTENT
         )
 
@@ -137,14 +137,14 @@ class UserViewSet(viewsets.ModelViewSet):
         ):
             request.auth.delete()
             return Response(status=204)
-        return Response({"error": "Доступ запрещен."}, status=401)
+        return Response({"error": "Access denied."}, status=401)
 
     @action(detail=False, methods=["get"])
     def me(self, request):
         user = request.user
         if not user.is_authenticated:
             return Response(
-                {"detail": "Пользователь не авторизован."},
+                {"detail": "User is not authorized."},
                 status=status.HTTP_401_UNAUTHORIZED,
             )
         serializer = UserSerializer(user)
@@ -202,14 +202,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if request.method == "POST":
             if ShoppingCart.objects.filter(user=user, recipe=recipe).exists():
                 return Response(
-                    {"detail": "Рецепт уже добавлен в список покупок."},
+                    {"detail": "Recipe is already added to the shopping list."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
             ShoppingCart.objects.create(user=user, recipe=recipe)
 
             return Response(
-                {"detail": "Рецепт добавлен в список покупок."},
+                {"detail": "Recipe added to the shopping list."},
                 status=status.HTTP_201_CREATED,
             )
 
@@ -220,14 +220,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 )
             except ShoppingCart.DoesNotExist:
                 return Response(
-                    {"detail": "Рецепт не найден в списке покупок."},
+                    {"detail": "Recipe not found in the shopping list."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
             shopping_cart_item.delete()
 
             return Response(
-                {"detail": "Рецепт удален из списка покупок."},
+                {"detail": "Recipe removed from the shopping list."},
                 status=status.HTTP_204_NO_CONTENT,
             )
         return {}
@@ -261,7 +261,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         output = StringIO()
         writer = csv.writer(output)
         writer.writerow(
-            ["Название ингредиента", "Количество", "Единицы измерения"]
+            ["Ingredient Name", "Quantity", "Measurement Units"]
         )
 
         for ingredient, amount in ingredient_counts.items():
@@ -292,12 +292,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if request.method == "POST":
             if created:
                 return Response(
-                    {"detail": "Рецепт добавлен в избранное."},
+                    {"detail": "Recipe added to favorites."},
                     status=status.HTTP_201_CREATED,
                 )
             else:
                 return Response(
-                    {"detail": "Рецепт уже добавлен в избранное."},
+                    {"detail": "Recipe is already added to favorites."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -305,12 +305,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
             if not created:
                 favorite.delete()
                 return Response(
-                    {"detail": "Рецепт удален из избранного."},
+                    {"detail": "Recipe removed from favorites."},
                     status=status.HTTP_204_NO_CONTENT,
                 )
             else:
                 return Response(
-                    {"detail": "Рецепт не найден в избранном."},
+                    {"detail": "Recipe not found in favorites."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
